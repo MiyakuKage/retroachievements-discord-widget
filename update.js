@@ -25,10 +25,11 @@ async function main() {
   const lastGameResponse = await fetch(lastGameUrl);
   const lastGameData = await lastGameResponse.json();
 
-  console.log("User Data:", userData);
-  console.log("Last Unlock Data:", lastUnlockData);
-  console.log("Last Game Data:", lastGameData);
-  
+  const allGamesUrl = `https://retroachievements.org/API/API_GetUserCompletedGames.php?u=${username}&y=${secretkey}`;
+  const allGamesResponse = await fetch(allGamesUrl);
+  const allGamesData = await allGamesResponse.json();
+  const numberOfGamesCompleted = allGamesData.filter(game => game.MaxPossible === game.NumAwarded).length / 2;
+
   const output = {
     username: userData.User,
     avatar: userData.UserPic,
@@ -38,6 +39,7 @@ async function main() {
     lastUnlockImage: lastUnlockData[0]?.BadgeURL ? "https://media.retroachievements.org/" + lastUnlockData[0].BadgeURL : null,
     lastGamePlayed: lastGameData.Title || null,
     lastGamePlayedImage: lastGameData.GameIcon ? "https://media.retroachievements.org/" + lastGameData.GameIcon : null,
+    numberOfGamesCompleted: numberOfGamesCompleted,
     updated: new Date().toISOString()
   };
 
